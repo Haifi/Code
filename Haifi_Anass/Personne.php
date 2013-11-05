@@ -11,10 +11,11 @@
  * @author geralodin
  */
 class Personne {
-    public $img;
+    public $img;public $nom;
     
-    function __construct($img) {
+    function __construct($img,$name) {
         $this->img = $img;
+		 $this->nom = $name;
     }
 
 }

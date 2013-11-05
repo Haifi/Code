@@ -5,6 +5,7 @@
 include_once 'Personne.php';
 
 // lecture d'un flux RSS 
+             
 $handle = fopen("http://picasaweb.google.com/data/feed/base/user/112537161896190034287/albumid/5931538032377292977?alt=rss&kind=photo&authkey=Gv1sRgCJjJwc265LnxigE&hl=fr", "rb");
 
 // buffer contenant les données du flux
@@ -39,7 +40,8 @@ if (isset($handle) && !empty($handle)) {
         
         //on les découpe selon notre ...
         $trueLink = explode('</a>', $link);
-        $personne[] = new Personne($trueLink[0]);
+		$desc = utf8_decode((string)$element->title);
+        $personne[] = new Personne($trueLink[0],$desc);
     } 	
     
     /*echo "<h2>Liste des étudiants participants</h2>";
@@ -53,18 +55,19 @@ if (isset($handle) && !empty($handle)) {
 <?php 
 foreach($personne as $p){ ?>
     <div class="photo">
-        <img <?php echo $p->img;?> 
+        <img <?php $tab=array(); $tab = explode(" ",$p->nom);
+		echo $p->img;?> 
  <br>
 
          
          
-		<img id="present" src="img/present.jpg" alt="Present" title="Present" onClick="setPrescence(1,'<?php echo $_GET['data']?>');"/>
-		<img id="retard" src="img/retard.jpg" alt="Retard" title="Retard" onClick="setPrescence(2,'<?php echo $_GET['data']?>');"/>
-	    <img id="excuse" src="img/excuse.jpg" alt="Excuse" title="Excuse" onClick="setPrescence(3,'<?php echo $_GET['data']?>');"/>
-        <img id="abscent" src="img/abscent.jpg" alt="Abscent" title="Abscent" onClick="setPrescence(4,'<?php echo $_GET['data']?>');"/>
+		<img id="present" src="img/present.jpg" alt="Present" title="Present" onClick="setPrescence(1,'<?php echo $_GET['data']?>','<?php echo $p->nom ?>');"/>
+		<img id="retard" src="img/retard.jpg" alt="Retard" title="Retard" onClick="setPrescence(2,'<?php echo $_GET['data']?>','<?php echo $p->nom ?>');"/>
+	    <img id="excuse" src="img/excuse.jpg" alt="Excuse" title="Excuse" onClick="setPrescence(3,'<?php echo $_GET['data']?>','<?php echo $p->nom ?>');"/>
+        <img id="abscent" src="img/abscent.jpg" alt="Abscent" title="Abscent" onClick="setPrescence(4,'<?php echo $_GET['data']?>','<?php echo $p->nom ?>');"/>
 
-        <p> Nom :</p>
-        <p> Prenom :</p>
+        <p> Nom : <?php echo $tab[0];?> </p>
+        <p> Prenom : <?php if(sizeof($tab)>1){ echo $tab[1]; } else{ echo " ";  }       ?></p>
         <div class="diagramme">
             <p id="headBlock">
                 <em>Les notes de l'année</em>.
@@ -129,12 +132,12 @@ foreach($personne as $p){ ?>
 			
 
 
-    function setPrescence(lib,cr) {
+    function setPrescence(lib,cr,nom) {
 
 $.ajax({
 type: "POST",
 url: "prescence.php",
-data: {data:lib,cours:cr},
+data: {data:lib,cours:cr,name:nom},
 success: function(msg){
 alert( "Data Saved: " + msg );
 }

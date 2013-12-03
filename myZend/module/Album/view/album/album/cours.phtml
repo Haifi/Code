@@ -1,3 +1,47 @@
+
+<script>
+
+//Function,  activated by clicking the button
+
+$("#trigger").click(function(){
+     alert("popo");
+    var text = $("#input_to_read").val();
+    var myData = {textData:text};
+
+    //The post using ajax
+    $.ajax({
+            type:"POST",
+            // URL : / name of the controller for the site / name of the action to be                         
+            //                                                 executed
+            url:"/cours/answer",
+            data:myData,
+            success: function(data){
+                                   //The callback function, that is going to be executed 
+                                   //after the server response. data is the data returned
+                                   //from the server.
+
+                                   // Show the returned text
+                                   $("#answer").text(data.text);
+
+
+                                    },
+            failure(function(){alert("Failure!!");})
+
+
+           });
+
+
+});
+
+
+</script>
+
+
+<input id="input_to_read" type="text">
+<button id="trigger">Klick</button>
+<!-- The answer will be shown here. -->
+<p id="answer"></p>
+
 <?php
 // module/Album/view/album/album/index.phtml:
 
